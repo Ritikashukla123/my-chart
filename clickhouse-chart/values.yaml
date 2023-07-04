@@ -1,0 +1,144 @@
+# Default values for clickhouse.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicas: 2
+
+image:
+  clickhouseServer: yandex/clickhouse-server:latest
+  clickhouseClient: yandex/clickhouse-client:latest
+
+service:
+  name: clickhouse-service
+  type: ClusterIP
+
+ports:
+  - name: http
+    protocol: TCP
+    port: 8123
+    targetPort: 8123
+  - name: native
+    protocol: TCP
+    port: 9000
+    targetPort: 9000
+
+configVolume:
+  name: config-volume
+  mountPath: /etc/clickhouse-server/config.d
+
+configMap:
+  name: clickhouse-config
+  defaultMode: 0644
+
+serviceAccount:
+  create: true
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false
+
+
+resources: {}
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+# Specify the name of the secret containing the ClickHouse configuration files.
+# The secret should be created separately.
+# Specify the name of the secret containing the ClickHouse user credentials.
+# The secret should be created separately.
+
+# Specify the ClickHouse configuration parameters as key-value pairs.
+
+# Specify the ClickHouse user credentials.
+credentials:
+  username: "clickhouse_admin"
+  password: "1234"
+
+# Specify the additional ClickHouse users to be created.
+# additionalUsers:
+#   - name: "user1"
+#     password: "password1"
+#   - name: "user2"
+#     password: "password2"
+
+# Specify the name of the PostgreSQL deployment.
+postgresqlDeploymentName: postgresql-deployment.yaml
+
+# Specify the PostgreSQL user credentials.
+postgresql:
+  user: "postgres"
+  password: "nxv3teFKg5"
+  database: "chaindeck"
+
+# Specify the Chaindeck API deployment.
+chaindeckApi:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: avi17/chaindeck-api
+    tag: "v52"
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 3030
+  env:
+    - name: JWT_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: JWT_SECRET_KEY
+    - name: JWT_REFRESH_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: JWT_REFRESH_SECRET_KEY
+    - name: CLICKHOUSE_URL
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: CLICKHOUSE_URL
+    - name: CLICKHOUSE_USER
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: CLICKHOUSE_USER
+    - name: CLICKHOUSE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: CLICKHOUSE_PASSWORD
+    - name: PROMETHEUS_URL
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: PROMETHEUS_URL
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: DATABASE_URL
+    - name: API_URL
+      valueFrom:
+        secretKeyRef:
+          name: my-secrets
+          key: API_URL
+
+# Specify the secrets to be created.
+secrets:
+  enabled: true
+  chaindeckApiSecret:
+    name: clickhouse-api-deployment-my-secrets
+    data:
+      JWT_SECRET_KEY: YXNkZg== 
+      JWT_REFRESH_SECRET_KEY: YXNkZg==
+      CLICKHOUSE_URL: bG9jYWxob3N0
+      CLICKHOUSE_USER: Y2xpY2tob3VzZV9hZG1pbg==
+      CLICKHOUSE_PASSWORD: MTIzNA==
+      PROMETHEUS_URL: bG9jYWxob3N0
+      DATABASE_URL: cG9zdGdyZXNxbDovL3Bvc3RncmVzOlhudjN0ZUZLZzVAaGlnaHdheS1zZXJ2aWNlL2NoYWluZGVjay8=
+      API_URL: aHR0cDovL2xvY2FsaG9zdDozMDAw

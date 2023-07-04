@@ -1,0 +1,6 @@
+apiVersion: v2
+name: my-chart
+version: 1.0.0
+description: A Helm chart for deploying ClickHouse, Chaindeck API, and PostgreSQL
+type: application
+appVersion: "1.16.0"

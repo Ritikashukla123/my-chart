@@ -1,0 +1,129 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: chaindeck-api-deployment
+#   labels:
+#    app: chaindeck-api
+#   annotations:
+#    meta.helm.sh/release-name: clickhouse-chart
+#    meta.helm.sh/release-namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: chaindeck-api
+#   template:
+#     metadata:
+#       labels:
+#         app: chaindeck-api
+#     spec:
+#       containers:
+#         - name: chaindeck-api
+#           image: avi17/chaindeck-api:v52
+#           ports:
+#             - containerPort: 3030
+          # env:
+          #   - name: JWT_SECRET_KEY
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: JWT_SECRET_KEY
+          #   - name: JWT_REFRESH_SECRET_KEY
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: JWT_REFRESH_SECRET_KEY
+            # - name: CLICKHOUSE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: CLICKHOUSE_URL
+            # - name: CLICKHOUSE_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: CLICKHOUSE_USER
+            # - name: CLICKHOUSE_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: CLICKHOUSE_PASSWORD
+            # - name: PROMETHEUS_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: PROMETHEUS_URL
+            # - name: DATABASE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: DATABASE_URL
+            # - name: API_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: my-secrets
+            #       key: API_URL
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chaindeck-api.fullname" . }}
+  labels:
+    app: chaindeck-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chaindeck-api
+  template:
+    metadata:
+      labels:
+        app: chaindeck-api
+    spec:
+      containers:
+        - name: chaindeck-api
+          image: avi17/chaindeck-api:v52
+          ports:
+            - containerPort: 3030
+        env:
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: JWT_SECRET_KEY
+            - name: JWT_REFRESH_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: JWT_REFRESH_SECRET_KEY
+            - name: CLICKHOUSE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: CLICKHOUSE_URL
+            - name: CLICKHOUSE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: CLICKHOUSE_USER
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: CLICKHOUSE_PASSWORD
+            - name: PROMETHEUS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: PROMETHEUS_URL
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: DATABASE_URL
+            - name: API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: API_URL
+
